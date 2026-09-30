@@ -1,0 +1,393 @@
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="30 Days">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#E6ECF2">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<title>30 Days</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--sky:#E6ECF2;--paper:#F7F9FB;--ink:#1E2B3A;--muted:#667587;--line:#D3DCE5;--done:#3E7C6E;--mid:#A9C9BF;--miss:#B4574A;--dawn:#E3A95C}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Figtree,system-ui,sans-serif;background:var(--sky);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:460px;margin:0 auto;padding:24px 20px 56px}
+  h1,h2,.q,.big{font-family:Literata,Georgia,serif;font-weight:600;letter-spacing:-.01em}
+  h1{font-size:32px;line-height:1.1}
+  h2{font-size:21px;margin:30px 0 10px}
+  p.sub{color:var(--muted);margin-top:6px;line-height:1.5}
+  button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--dawn);outline-offset:2px}
+  .btn{display:block;width:100%;padding:15px 18px;border-radius:14px;font-weight:600;font-size:16px;text-align:left;background:var(--paper);border:1px solid var(--line);margin-top:10px}
+  .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .btn small{display:block;font-weight:400;color:var(--muted);margin-top:2px;font-size:14px}
+  .btn.primary small{color:#C5D0DB}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pair .btn{text-align:center}
+  .link{color:var(--muted);text-decoration:underline;font-size:14px;margin-top:22px}
+  /* scoreboard */
+  .board{background:var(--ink);color:#fff;border-radius:20px;padding:20px;margin-top:18px}
+  .board .top-line{display:flex;justify-content:space-between;align-items:baseline}
+  .board .big{font-size:52px;line-height:1}
+  .board .lbl{color:#AFBCCB;font-size:13px}
+  .board .ring{height:8px;background:#34445A;border-radius:8px;margin:12px 0 16px;overflow:hidden}
+  .board .ring div{height:100%;background:var(--mid)}
+  .board .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
+  .board .grid b{font-size:20px;display:block}
+  .mini{height:4px;background:#34445A;border-radius:4px;margin-top:6px;overflow:hidden}
+  .mini div{height:100%;background:var(--dawn)}
+  /* chain */
+  .chain{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:20px}
+  .cell{aspect-ratio:1;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+  .cell.future{background:transparent;border-style:dashed}
+  .cell.today{border-color:var(--ink);border-width:2px;color:var(--ink);font-weight:700}
+  .cell.has{color:#fff;border-color:transparent}
+  .cell.ms{box-shadow:0 0 0 2px var(--sky),0 0 0 3.5px var(--dawn)}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted);margin-top:10px}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+  /* check-in */
+  .top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:14px}
+  .bar{height:4px;background:var(--line);border-radius:4px;margin:14px 0 30px;overflow:hidden}
+  .bar div{height:100%;background:var(--ink);transition:width .25s}
+  .group{font-size:14px;font-weight:600;color:var(--done);margin-bottom:10px}
+  .q{font-size:29px;line-height:1.2;min-height:106px}
+  .hint{color:var(--muted);margin-top:8px;line-height:1.5}
+  .yn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}
+  .yn button{padding:20px;border-radius:16px;font-size:18px;font-weight:700;border:2px solid var(--line);background:var(--paper)}
+  .yn .yes.on{background:var(--done);border-color:var(--done);color:#fff}
+  .yn .no.on{background:var(--miss);border-color:var(--miss);color:#fff}
+  .mins{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:26px}
+  .mins button.step{width:56px;height:56px;border-radius:50%;border:2px solid var(--line);background:var(--paper);font-size:24px;font-weight:600}
+  .mins .val{font-family:Literata,serif;font-size:60px;font-weight:600;min-width:120px;text-align:center;line-height:1}
+  .mins .val small{display:block;font-family:Figtree;font-size:14px;color:var(--muted);font-weight:500;margin-top:6px}
+  .chips{display:flex;gap:8px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+  .chips button{padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:var(--paper);font-weight:600;font-size:14px}
+  .chips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .status{text-align:center;margin-top:16px;font-size:14px;font-weight:600}
+  textarea,input[type=date]{width:100%;margin-top:14px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--paper);font:inherit;color:var(--ink);resize:vertical}
+  textarea{min-height:58px}
+  /* report */
+  .score{display:flex;align-items:baseline;gap:10px;margin-top:16px}
+  .score b{font-family:Literata,serif;font-size:60px;line-height:1}
+  .score span{color:var(--muted)}
+  .callout{margin-top:14px;padding:12px 14px;border-radius:12px;background:#F3E6CF;color:#6B4A17;font-size:15px;line-height:1.45}
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:4px 16px;margin-top:10px}
+  .row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .mark{flex:0 0 22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;margin-top:1px}
+  .mark.y{background:var(--done)}.mark.n{background:var(--miss)}.mark.u{border:1.5px dashed var(--line)}
+  .row .note{display:block;color:var(--muted);font-size:14px;margin-top:3px}
+  .prog{padding:12px 0;border-bottom:1px solid var(--line)}
+  .prog:last-child{border-bottom:none}
+  .prog .name{font-weight:600;font-size:15px}
+  .prog .nums{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-top:2px}
+  .prog .nums b{color:var(--ink)}
+  .track{height:7px;background:var(--line);border-radius:7px;margin-top:7px;overflow:hidden}
+  .track div{height:100%;border-radius:7px}
+  .subhead{font-size:13px;font-weight:600;color:var(--done);padding-top:14px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- Habits ---------- */
+const HABITS = {
+  morning: [
+    {id:'wake',   g:'Morning', q:'Were you up by 8:00?'},
+    {id:'prayAM', g:'Morning', q:'Did you do 15 minutes of morning prayer and silence?'},
+    {id:'strAM',  g:'Morning', q:'Did you stretch this morning?'},
+    {id:'move',   g:'Morning', q:'Did you walk, run, or work out for 30 minutes?', hint:'Note which one below.'},
+    {id:'fruit',  g:'Morning', q:'Did you have a smoothie, juice, or fruit?'},
+  ],
+  evening: [
+    {id:'clean',  g:'Reset the space', q:'Is the house back to baseline clean?'},
+    {id:'feng',   g:'Reset the space', q:'Did you improve one thing in your space?', hint:'What did you change?'},
+    {id:'prep',   g:'Reset the space', q:'Did you spend 30 minutes prepping for tomorrow?'},
+    {id:'read',   g:'Feed the mind', q:'How many minutes did you read?', type:'min', hint:'Goal 30. Minimum 10 counts as done.'},
+    {id:'write',  g:'Feed the mind', q:'How many minutes did you write?', type:'min', hint:'Goal 30. Minimum 10 counts as done.'},
+    {id:'scrip',  g:'Feed the mind', q:'Did you read 2 chapters of scripture?', hint:'Which chapters?'},
+    {id:'create', g:'Feed the mind', q:'Did you move your creative project forward at least 1%?', hint:'What was the 1%?'},
+    {id:'screen', g:'Wind down', q:'Did you keep non-work screen time to 30 minutes or less?'},
+    {id:'prayGF', g:'Wind down', q:'Did you pray with your girlfriend?'},
+    {id:'floss',  g:'Wind down', q:'Did you floss?'},
+    {id:'strPM',  g:'Wind down', q:'Did you do 15 minutes of stretching and silence tonight?'},
+  ]
+};
+const ALL=[...HABITS.morning,...HABITS.evening];
+const LABEL={wake:'Up by 8:00',prayAM:'Morning prayer + silence',strAM:'Morning stretch',move:'30 min movement',fruit:'Smoothie, juice, or fruit',clean:'House baseline clean',feng:'One space improvement',prep:'Tomorrow prep',read:'Read',write:'Write',scrip:'Scripture, 2 chapters',create:'1% on creative project',screen:'Screen time ≤ 30 min',prayGF:'Prayer with girlfriend',floss:'Floss',strPM:'Evening stretch + silence'};
+const LENGTH=30, MIN_OK=10, MIN_GOAL=30, MILESTONES=[7,14,21,30];
+const KEY='commit30-v1';
+
+/* ---------- State ---------- */
+let S={start:null,days:{}};
+let MODE='none';
+const LS=(()=>{try{const t='__t';window['local'+'Storage'].setItem(t,t);window['local'+'Storage'].removeItem(t);return window['local'+'Storage'];}catch(e){return null;}})();
+async function load(){
+  if(window.storage){
+    MODE='claude';
+    try{const r=await window.storage.get(KEY,false);if(r&&r.value){S=JSON.parse(r.value);return;}}catch(e){}
+  }
+  if(LS){ if(MODE==='none')MODE='device'; const v=LS.getItem(KEY); if(v&&!S.start)S=JSON.parse(v); }
+}
+async function save(){
+  const json=JSON.stringify(S); let ok=false;
+  if(window.storage){try{const r=await window.storage.set(KEY,json,false);ok=!!r;}catch(e){}}
+  if(LS){try{LS.setItem(KEY,json);ok=true;}catch(e){}}
+  if(!ok&&!save.warned){save.warned=true;toast('This screen can\'t save. Export a backup.');}
+}
+function exportData(){
+  const json=JSON.stringify(S),name=`30-days-backup-${todayKey()}.json`;
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=name;a.click();toast('Backup downloaded');}
+  catch(e){navigator.clipboard.writeText(json).then(()=>toast('Backup copied'),()=>toast('Export not available here'));}
+}
+function importData(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';
+  inp.onchange=async()=>{const f=inp.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d.start||!d.days)throw 0;if(!confirm('Replace what\'s on this device with the backup?'))return;S=d;await save();home();toast('Backup restored');}catch(e){toast('That file isn\'t a 30 Days backup');}};
+  inp.click();
+}
+
+/* ---------- Dates (before 4am counts as the previous day, for late check-ins) ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const keyOf=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse=k=>{const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d);};
+const todayKey=()=>{const d=new Date();if(d.getHours()<4)d.setDate(d.getDate()-1);return keyOf(d);};
+const dayIndex=k=>Math.round((parse(k)-parse(S.start))/86400000);
+const keyForIndex=i=>{const d=parse(S.start);d.setDate(d.getDate()+i);return keyOf(d);};
+const pretty=k=>parse(k).toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+const lastIdx=()=>Math.min(dayIndex(todayKey()),LENGTH-1);
+
+function day(k){const d=S.days[k]||(S.days[k]={a:{},n:{},line:''});if(!d.m)d.m={};return d;}
+function scoreOf(k){const d=S.days[k];if(!d)return{yes:0,ans:0};let yes=0,ans=0;ALL.forEach(h=>{if(h.id in d.a){ans++;if(d.a[h.id])yes++;}});return{yes,ans};}
+const complete=k=>scoreOf(k).ans===ALL.length;
+
+/* ---------- Stats ---------- */
+function habitStats(upTo){ // per habit: days kept / days elapsed through index upTo, plus current run
+  const out={};
+  ALL.forEach(h=>{
+    let kept=0,run=0;
+    for(let i=0;i<=upTo;i++){const d=S.days[keyForIndex(i)];const ok=!!(d&&d.a[h.id]);if(ok){kept++;run++;}else run=0;}
+    out[h.id]={kept,days:upTo+1,pct:Math.round(kept/(upTo+1)*100),run};
+  });
+  return out;
+}
+function totals(upTo){
+  let yes=0,perfect=0,read=0,write=0,best=0,run=0,cur=0;
+  for(let i=0;i<=upTo;i++){
+    const k=keyForIndex(i),d=S.days[k],s=scoreOf(k);
+    yes+=s.yes; if(d&&d.m){read+=d.m.read||0;write+=d.m.write||0;}
+    if(s.yes===ALL.length){perfect++;run++;best=Math.max(best,run);}else if(!(i===upTo&&!complete(k)))run=0;
+  }
+  cur=run;
+  const days=upTo+1;
+  return{yes,possible:days*ALL.length,pct:Math.round(yes/(days*ALL.length)*100),perfect,read,write,best,cur,days};
+}
+const clr=p=>p>=90?'var(--done)':p>=70?'#6FA394':p>=50?'var(--mid)':p>0?'var(--dawn)':'var(--miss)';
+
+/* ---------- UI ---------- */
+const $=s=>document.querySelector(s), app=$('#app');
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1600);}
+window.scrollTo(0,0);
+
+function setup(){
+  app.innerHTML=`
+    <h1>30 days of better habits</h1>
+    <p class="sub">16 daily commitments, checked in morning and evening. Nothing resets. At the end you get the full picture.</p>
+    <h2>When does day 1 start?</h2>
+    <input type="date" id="sd" value="${todayKey()}">
+    <button class="btn primary" id="go" style="text-align:center">Start the 30 days</button>
+    <button class="link" id="imp">Restore from a backup</button>`;
+  $('#imp').onclick=importData;
+  $('#go').onclick=async()=>{S.start=$('#sd').value||todayKey();await save();home();};
+}
+
+function board(upTo){
+  const t=totals(upTo), goal=MIN_GOAL*LENGTH;
+  return `<div class="board">
+    <div class="top-line"><span class="big">${t.pct}%</span><span class="lbl">${t.yes} of ${t.possible} commitments kept</span></div>
+    <div class="ring"><div style="width:${t.pct}%"></div></div>
+    <div class="grid">
+      <div><b>${t.read} min</b><span class="lbl">read of ${goal}</span><div class="mini"><div style="width:${Math.min(100,t.read/goal*100)}%"></div></div></div>
+      <div><b>${t.write} min</b><span class="lbl">written of ${goal}</span><div class="mini"><div style="width:${Math.min(100,t.write/goal*100)}%"></div></div></div>
+      <div><b>${t.perfect}</b><span class="lbl">perfect days</span></div>
+      <div><b>${t.cur}<span class="lbl" style="font-size:14px"> / best ${t.best}</span></b><span class="lbl">perfect-day streak</span></div>
+    </div></div>`;
+}
+
+function home(){
+  window.scrollTo(0,0);
+  const tk=todayKey(),ti=dayIndex(tk),before=ti<0,over=ti>=LENGTH;
+  const cells=Array.from({length:LENGTH},(_,i)=>{
+    const k=keyForIndex(i),{yes,ans}=scoreOf(k),past=i<=ti;
+    const style=ans&&past?`style="background:${clr(yes/ALL.length*100)}"`:'';
+    return `<button class="cell ${i>ti?'future':''} ${i===ti?'today':''} ${ans&&past?'has':''} ${MILESTONES.includes(i+1)?'ms':''}" ${style} data-k="${k}" ${i>ti?'disabled':''} aria-label="Day ${i+1}">${i+1}</button>`;
+  }).join('');
+  const d=S.days[tk]||{a:{}};
+  const amDone=HABITS.morning.every(h=>h.id in d.a),pmDone=HABITS.evening.every(h=>h.id in d.a);
+  const next=MILESTONES.find(m=>m>ti+1);
+
+  app.innerHTML=`
+    <h1>${before?'Starts '+pretty(S.start):over?'The 30 days are done':'Day '+(ti+1)+' of 30'}</h1>
+    <p class="sub">${before?'':over?'Your final numbers are below.':pretty(tk)+(next&&next!==30?` · checkpoint on day ${next}`:'')}</p>
+    ${before?'':board(lastIdx())}
+    <div class="chain">${cells}</div>
+    <div class="legend"><span><i style="background:var(--done)"></i>90%+</span><span><i style="background:var(--mid)"></i>50%+</span><span><i style="background:var(--dawn)"></i>Under half</span><span><i style="background:transparent;box-shadow:0 0 0 1.5px var(--dawn)"></i>Weekly checkpoint</span></div>
+    ${before||over?'':`
+    <button class="btn ${!amDone?'primary':''}" id="am">Morning check-in<small>${amDone?'Done, tap to edit':'5 questions'}</small></button>
+    <button class="btn ${amDone&&!pmDone?'primary':''}" id="pm">Evening check-in<small>${pmDone?'Done, tap to edit':'11 questions + one line about today'}</small></button>
+    <button class="btn" id="rep">Today's report<small>${complete(tk)?'Score and progress on every habit':'Unlocks progress bars once both check-ins are done'}</small></button>`}
+    ${before?'':`<button class="btn" id="all">Full assessment<small>Every habit ranked, plus weekly breakdown</small></button>`}
+    <p class="sub" style="font-size:13px;margin-top:18px">Tap any past day to see its report or fill in a missed check-in.</p>
+    <div class="pair" style="margin-top:22px"><button class="btn" id="exp">Export backup</button><button class="btn" id="imp">Restore backup</button></div>
+    <button class="link" id="reset">Change start date or reset</button>`;
+  $('#exp').onclick=exportData; $('#imp').onclick=importData;
+  app.querySelectorAll('.cell:not([disabled])').forEach(c=>c.onclick=()=>report(c.dataset.k));
+  if($('#am'))$('#am').onclick=()=>checkin('morning',tk);
+  if($('#pm'))$('#pm').onclick=()=>checkin('evening',tk);
+  if($('#rep'))$('#rep').onclick=()=>report(tk);
+  if($('#all'))$('#all').onclick=assessment;
+  $('#reset').onclick=async()=>{if(confirm('This erases every check-in and starts over. Continue?')){S={start:null,days:{}};await save();setup();}};
+}
+
+function checkin(part,k){
+  window.scrollTo(0,0);
+  const list=HABITS[part],d=day(k),extra=part==='evening';let i=0;
+  const total=list.length+(extra?1:0);
+  function head(label){return `<div class="top"><button id="back">${i===0?'Home':'Back'}</button><span>${label}</span></div><div class="bar"><div style="width:${i/total*100}%"></div></div>`;}
+  function back(){if(i===0)home();else{i--;render();}}
+  function render(){
+    if(i>=list.length){
+      if(!extra){save();complete(k)?report(k):home();return;}
+      app.innerHTML=`${head(total+' of '+total)}
+        <div class="q">One line about today.</div>
+        <p class="hint">A win, a lesson, or how it felt. Optional.</p>
+        <textarea id="line" placeholder="Today I…">${esc(d.line)}</textarea>
+        <button class="btn primary" id="fin" style="text-align:center">See today's report</button>`;
+      $('#back').onclick=back;
+      $('#fin').onclick=async()=>{d.line=$('#line').value.trim();await save();report(k);};
+      return;
+    }
+    const h=list[i];
+    if(h.type==='min'){
+      let m=d.m[h.id]??0;
+      const draw=()=>{
+        $('#mv').firstChild.nodeValue=m;
+        const st=$('#st');
+        st.textContent=m>=MIN_GOAL?'Goal reached':m>=MIN_OK?`Counts as done · ${MIN_GOAL-m} short of goal`:m>0?`${MIN_OK-m} more to count`:'Not done';
+        st.style.color=m>=MIN_GOAL?'var(--done)':m>=MIN_OK?'var(--ink)':'var(--miss)';
+        app.querySelectorAll('.chips button').forEach(b=>b.classList.toggle('on',+b.dataset.v===m));
+      };
+      app.innerHTML=`${head((i+1)+' of '+total)}
+        <div class="group">${h.g}</div>
+        <div class="q">${h.q}</div><p class="hint">${h.hint}</p>
+        <div class="mins"><button class="step" id="dn" aria-label="Minus 5">−</button><div class="val" id="mv">0<small>minutes</small></div><button class="step" id="up" aria-label="Plus 5">+</button></div>
+        <div class="chips">${[0,10,20,30,45,60].map(v=>`<button data-v="${v}">${v}</button>`).join('')}</div>
+        <div class="status" id="st"></div>
+        <textarea id="note" placeholder="${h.id==='read'?'What did you read?':'What did you write?'}">${esc(d.n[h.id])}</textarea>
+        <button class="btn primary" id="nx" style="text-align:center">Save and continue</button>`;
+      draw();
+      $('#dn').onclick=()=>{m=Math.max(0,m-5);draw();};
+      $('#up').onclick=()=>{m+=5;draw();};
+      app.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>{m=+b.dataset.v;draw();});
+      $('#back').onclick=back;
+      $('#nx').onclick=async()=>{d.m[h.id]=m;d.a[h.id]=m>=MIN_OK;const n=$('#note').value.trim();if(n)d.n[h.id]=n;else delete d.n[h.id];await save();i++;render();};
+      return;
+    }
+    const v=d.a[h.id];
+    app.innerHTML=`${head((i+1)+' of '+total)}
+      <div class="group">${h.g}</div>
+      <div class="q">${h.q}</div>${h.hint?`<p class="hint">${h.hint}</p>`:''}
+      <div class="yn"><button class="yes ${v===true?'on':''}" id="y">Yes</button><button class="no ${v===false?'on':''}" id="n">Not today</button></div>
+      <textarea id="note" placeholder="Note (optional)">${esc(d.n[h.id])}</textarea>`;
+    const answer=async val=>{d.a[h.id]=val;const n=$('#note').value.trim();if(n)d.n[h.id]=n;else delete d.n[h.id];await save();i++;render();};
+    $('#y').onclick=()=>answer(true);$('#n').onclick=()=>answer(false);$('#back').onclick=back;
+  }
+  render();
+}
+
+function progRow(h,st,extra){
+  return `<div class="prog"><div class="name">${LABEL[h.id]}</div>
+    <div class="nums"><span><b>${st.kept}/${st.days}</b>${extra||''}</span><span>${st.run>=3?st.run+'-day run · ':''}<b>${st.pct}%</b></span></div>
+    <div class="track"><div style="width:${st.pct}%;background:${clr(st.pct)}"></div></div></div>`;
+}
+function progressBlock(upTo,d){
+  const hs=habitStats(upTo),t=totals(upTo);let html='',g='';
+  ALL.forEach(h=>{
+    if(h.g!==g){g=h.g;html+=`<div class="subhead">${g}</div>`;}
+    let extra='';
+    if(h.type==='min'){const tot=h.id==='read'?t.read:t.write;extra=` · ${d&&d.m?d.m[h.id]||0:0} today · ${tot} total`;}
+    html+=progRow(h,hs[h.id],extra);
+  });
+  return `<div class="panel">${html}</div>`;
+}
+
+function report(k){
+  window.scrollTo(0,0);
+  const d=day(k),{yes,ans}=scoreOf(k),idx=dayIndex(k),done=ans===ALL.length;
+  const t=totals(idx),prev=idx>0?totals(idx-1):{best:0};
+  const missed=ALL.filter(h=>d.a[h.id]===false).map(h=>LABEL[h.id]);
+  let note='';
+  if(done){
+    if(yes===ALL.length&&t.cur>prev.best&&t.cur>1)note=`New best: ${t.cur} perfect days in a row.`;
+    else if(MILESTONES.includes(idx+1))note=`Checkpoint: ${idx+1} days in. You've kept ${t.pct}% of everything so far. Open the full assessment to see which habits need protecting.`;
+    else if(d.m&&(d.m.read>=MIN_GOAL&&d.m.write>=MIN_GOAL))note='Full 30 minutes on both reading and writing today.';
+  }
+  const section=(title,list)=>`<h2>${title}</h2><div class="panel">${list.map(h=>{
+    const v=d.a[h.id],m=v===true?'y':v===false?'n':'u',mins=h.type==='min'&&h.id in d.a?` · ${d.m[h.id]||0} min`:'';
+    return `<div class="row"><span class="mark ${m}">${v===true?'✓':v===false?'✕':''}</span><div>${LABEL[h.id]}${mins}${d.n[h.id]?`<span class="note">${esc(d.n[h.id])}</span>`:''}</div></div>`;}).join('')}</div>`;
+
+  app.innerHTML=`
+    <div class="top"><button id="back">Home</button><span>Day ${idx+1} of 30</span></div>
+    <h1 style="margin-top:16px">${pretty(k)}</h1>
+    <div class="score"><b>${yes}/${ALL.length}</b><span>${!done?`${ALL.length-ans} still to check in`:yes===ALL.length?'Every commitment kept.':`${Math.round(yes/ALL.length*100)}% kept today`}</span></div>
+    ${note?`<div class="callout">${note}</div>`:''}
+    <div class="pair"><button class="btn" id="eam">${HABITS.morning.every(h=>h.id in d.a)?'Edit morning':'Morning check-in'}</button><button class="btn" id="epm">${HABITS.evening.every(h=>h.id in d.a)?'Edit evening':'Evening check-in'}</button></div>
+    ${done?`<h2>Progress through day ${idx+1}</h2>${board(idx)}${progressBlock(idx,d)}`:`<p class="sub" style="margin-top:18px">Finish both check-ins to see your progress on every habit.</p>`}
+    ${d.line?`<h2>Today in one line</h2><div class="panel"><p style="padding:12px 0;line-height:1.55;font-family:Literata,serif">${esc(d.line)}</p></div>`:''}
+    ${missed.length?`<h2>Focus for tomorrow</h2><p class="sub" style="margin-top:0">${missed.join(', ')}.</p>`:''}
+    ${section('Before work',HABITS.morning)}
+    ${section('After work',HABITS.evening)}
+    <button class="btn primary" id="copy" style="text-align:center">Copy report as text</button>`;
+  $('#back').onclick=home;
+  $('#eam').onclick=()=>checkin('morning',k);
+  $('#epm').onclick=()=>checkin('evening',k);
+  $('#copy').onclick=async()=>{
+    const hs=habitStats(idx),L=[`Day ${idx+1}/30 — ${pretty(k)}`,`Today: ${yes}/${ALL.length} · Overall: ${t.pct}%`,`Read ${d.m.read||0} min (${t.read} total) · Wrote ${d.m.write||0} min (${t.write} total)`,''];
+    ALL.forEach(h=>{const v=d.a[h.id];L.push(`${v===true?'✅':v===false?'❌':'⬜'} ${LABEL[h.id]} — ${hs[h.id].kept}/${hs[h.id].days} ${hs[h.id].pct}%${d.n[h.id]?' ('+d.n[h.id]+')':''}`);});
+    if(d.line)L.push('','Today: '+d.line);
+    try{await navigator.clipboard.writeText(L.join('\n'));toast('Report copied');}catch(e){toast('Copy not available here');}
+  };
+}
+
+function assessment(){
+  window.scrollTo(0,0);
+  const up=lastIdx(),hs=habitStats(up),t=totals(up);
+  const ranked=[...ALL].sort((a,b)=>hs[b.id].pct-hs[a.id].pct);
+  const weeks=[[0,6],[7,13],[14,20],[21,29]].filter(([s])=>s<=up).map(([s,e],w)=>{
+    e=Math.min(e,up);let y=0,n=0;for(let i=s;i<=e;i++){y+=scoreOf(keyForIndex(i)).yes;n+=ALL.length;}
+    const p=Math.round(y/n*100);
+    return `<div class="prog"><div class="nums"><span><b>Week ${w+1}</b> · days ${s+1}–${e+1}</span><b>${p}%</b></div><div class="track"><div style="width:${p}%;background:${clr(p)}"></div></div></div>`;
+  }).join('');
+  const avgR=Math.round(t.read/t.days),avgW=Math.round(t.write/t.days);
+  app.innerHTML=`
+    <div class="top"><button id="back">Home</button><span>Through day ${up+1}</span></div>
+    <h1 style="margin-top:16px">Full assessment</h1>
+    ${board(up)}
+    <h2>Reading and writing</h2>
+    <div class="panel"><div class="prog"><div class="nums"><span><b>Reading</b> · avg ${avgR} min/day</span><span>on pace for <b>${avgR*LENGTH}</b></span></div></div>
+    <div class="prog"><div class="nums"><span><b>Writing</b> · avg ${avgW} min/day</span><span>on pace for <b>${avgW*LENGTH}</b></span></div></div></div>
+    <h2>By week</h2><div class="panel">${weeks}</div>
+    <h2>Every habit, strongest first</h2>
+    <div class="panel">${ranked.map(h=>progRow(h,hs[h.id])).join('')}</div>
+    <p class="sub">Days without a check-in count as missed, so fill in any gaps from the home screen.</p>`;
+  $('#back').onclick=home;
+}
+
+(async()=>{await load();S.start?home():setup();})();
+</script>
